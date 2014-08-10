@@ -1,0 +1,50 @@
+/* Disable text selection {{{ */
+body {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+/* }}} */
+/* NG A links dont display as clickable {{{ */
+a[ng-click] {
+	cursor: pointer;
+}
+/* }}} */
+/* Alert boxes need padding {{{ */
+.scrollable-content > .alert {
+	margin: 20px;
+}
+/* }}} */
+/* Mobile-Angular-UI {{{ */
+/* Form padding is a bit extreme {{{ */
+.panel-body {
+	padding: 0;
+}
+
+.panel-body .form-group {
+	padding: 4px 15px;
+}
+/* }}} */
+/* .panel .panel-centered {{{ */
+.panel.panel-centered .panel-heading {
+	font-size: 20px;
+	padding: 7px 0 7px !important;
+	text-align: center;
+	font-weight: bold;
+}
+/* }}} */
+/* Scrollable areas should never X scroll {{{ */
+.scrollable-content {
+	overflow-x: hidden;
+}
+/* }}} */
+/* Last list inside a panel should not have a bottom margin {{{ */
+.panel-body .list-group:last-child {
+	margin-bottom: 0;
+}
+/* }}} */
+/* }}} */
+

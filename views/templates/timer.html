@@ -1,0 +1,50 @@
+<span ng-controller="timerController">
+<!-- Header {{{ -->
+<div class="navbar navbar-app navbar-absolute-top">
+	<div class="navbar-brand navbar-brand-center">
+		<span>
+			{{timer.title}}
+		</span>
+	</div>
+
+	<div class="btn-group pull-left">
+		<div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
+			<i class="fa fa-bars"></i> Menu
+		</div>
+	</div>
+
+	<div class="btn-group pull-right">
+		<a ng-href="#/timer/{{timer.id}}/edit" class="btn btn-navbar">
+			<i class="fa fa-wrench"></i> Edit
+		</a>
+	</div>
+</div>
+<!-- }}} -->
+<!-- Body -->
+<div class="app-body"><div class="app-content">
+
+<div class="scrollable">
+	<div class="scrollable-content">
+		<div class="list-group">
+			<a ng-repeat="item in timer.script" class="list-group-item" ng-class="item.active && 'active'">
+				<i ng-show="item.active" class="fa fa-arrow-right"></i>
+				{{item.title}}
+				<span class="badge badge-timer pull-right" ng-class="item.active ? 'badge-warning' : 'badge-default'">{{item.valueFormatted}}</span>
+			</a>
+		</div>
+	<pre>{{timer|pretty}}</pre>
+	</div>
+</div>
+
+</div></div>
+<!-- }}} -->
+	<!-- Footer {{{ -->
+	<div class="navbar navbar-app navbar-absolute-bottom">
+		<div class="btn-group justified">
+			<a ng-show="!timerEnabled" ng-click="startTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-play fa-navbar"></i></a>
+			<a ng-show="timerEnabled" ng-click="pauseTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-pause fa-navbar"></i></a>
+			<a ng-show="timerEnabled" ng-click="stopTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-stop fa-navbar"></i></a>
+		</div>
+	</div>
+	<!-- }}} -->
+</span>
