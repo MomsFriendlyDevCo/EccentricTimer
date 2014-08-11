@@ -1,0 +1,66 @@
+<span ng-controller="settingsController">
+<!-- Header {{{ -->
+<div class="navbar navbar-app navbar-absolute-top">
+	<div class="navbar-brand navbar-brand-center">
+		<span>Settings</span>
+	</div>
+
+	<div class="btn-group pull-left">
+		<div ng-click="toggle('mainSidebar')" class="btn btn-navbar sidebar-toggle">
+			<i class="fa fa-bars"></i> Menu
+		</div>
+	</div>
+</div>
+<!-- }}} -->
+<!-- Body -->
+<div class="app-body"><div class="app-content">
+
+<div class="scrollable">
+	<div class="scrollable-content">
+		<div class="panel">
+			<div class="panel-heading">
+				<h2 class="panel-title">General display</h2>
+			</div>
+			<div class="panel-body">
+				<div class="form-group row">
+					<label class="control-label col-xs-9 col-sm-10 col-lg-11">Show bottom navigation bar</label>
+					<div class="form-control-wrapper col-xs-3 col-sm-2 col-lg-1">
+						<switch ng-model="user.settings.navShowBottomBar"/>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel">
+			<div class="panel-heading">
+				<h2 class="panel-title">Text-to-speach</h2>
+			</div>
+			<div class="panel-body">
+				<div ng-show="!hasTTS" class="alert alert-warning">
+					<h3>TTS Unsupported</h3>
+					<p>Sorry but this device doesnt seem to support text-to-speach.</p>
+				</div>
+				<div ng-show="hasTTS" class="form-group row">
+					<label class="control-label col-xs-9 col-sm-10 col-lg-11">Enable TTS</label>
+					<div class="form-control-wrapper col-xs-3 col-sm-2 col-lg-1">
+						<switch ng-model="user.settings.tts.enabled"/>
+					</div>
+				</div>
+				<div ng-show="hasTTS" class="form-group row">
+					<label class="control-label col-lg-2">Voice</label>
+					<div class="form-control-wrapper col-lg-10">
+						<select class="form-control" ng-model="user.settings.tts.voice">
+							<option ng-repeat="voice in voices" ng-value="$index">{{voice.name}}</option>
+						</select>
+					</div>
+				</div>
+				<div ng-show="hasTTS" class="form-group row text-center">
+					<a ng-click="testTTS()" class="btn btn-info"><i class="fa" ng-class="speaking ? 'fa-pause' : 'fa-play'"></i> Test TTS</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+</div></div>
+<!-- }}} -->
+</span>

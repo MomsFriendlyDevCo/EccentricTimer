@@ -1,4 +1,13 @@
 app.run(function($rootScope) {
+	$rootScope.user = {
+		settings: {
+			tts: {
+				enabled: true,
+				voice: 0
+			}
+		}
+	};
+
 	$rootScope.timers = [
 		{
 			id: 'tennisElbow',

@@ -33,4 +33,9 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "/templates/error.html",
 		animateIn: 'fadeInUpBig'
 	});
+	$routeProvider.when('/settings', {
+		templateUrl: "/templates/settings.html",
+		animateIn: 'fadeInUpBig',
+		animateIn: 'fadeOutDownBig'
+	});
 });
