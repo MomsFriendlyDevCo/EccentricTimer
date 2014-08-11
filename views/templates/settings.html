@@ -46,6 +46,12 @@
 					</div>
 				</div>
 				<div ng-show="hasTTS" class="form-group row">
+					<label class="control-label col-xs-9 col-sm-10 col-lg-11">Enable Countdowns</label>
+					<div class="form-control-wrapper col-xs-3 col-sm-2 col-lg-1">
+						<switch ng-model="user.settings.tts.countdown"/>
+					</div>
+				</div>
+				<div ng-show="hasTTS" class="form-group row">
 					<label class="control-label col-lg-2">Voice</label>
 					<div class="form-control-wrapper col-lg-10">
 						<select class="form-control" ng-model="user.settings.tts.voice">
