@@ -1,11 +1,23 @@
 app.controller('timerController', function($scope, $rootScope, $routeParams, $location, $filter) {
-	$scope.timer = _.find($rootScope.timers, {id: $routeParams.id});
+	$scope.refresh = function() {
+		$scope.timerEnabled = false;
+		$scope.timer = _.find($rootScope.timers, {id: $routeParams.id});
+		$scope.activeScript = 0;
+		for (var s in $scope.timer.script) {
+			$scope.timer.script[s].value = $scope.timer.script[s].time;
+			$scope.timer.script[s].valueFormatted = $filter('formatTimer')($scope.timer.script[s].value);
+		}
+	};
+	$scope.refresh();
+
+	// Watchers {{{
 	$scope.activeScript = 0;
-	for (var s in $scope.timer.script) {
-		$scope.timer.script[s].value = $scope.timer.script[s].time;
-		$scope.timer.script[s].valueFormatted = $filter('formatTimer')($scope.timer.script[s].value);
-		$scope.timer.script[s].active = (s == $scope.activeScript);
-	}
+	$scope.$watch('activeScript', function() {
+		for (var s in $scope.timer.script) {
+			$scope.timer.script[s].active = (s == $scope.activeScript);
+		}
+	});
+	// }}}
 
 	if (!$scope.timer) {
 		$location.path('/error');
@@ -21,7 +33,10 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 		$scope.timerEnabled = false;
 	};
 	$scope.stopTimer = function() {
-		$scope.timerEnabled = false;
+		$scope.refresh();
+	};
+	$scope.skipTimer = function(offset) {
+		$scope.activeScript = offset;
 	};
 
 	$scope.timerTick = function() {
@@ -29,7 +44,6 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 			if (!$scope.timerEnabled)
 				return;
 			var newValue = $scope.timer.script[$scope.activeScript].value - 1000;
-			console.log('TICK', $scope.activeScript, 'to', newValue);
 			if (newValue <= 0) {
 				$scope.timer.script[$scope.activeScript].value = 0;
 				$scope.timer.script[$scope.activeScript].valueFormatted = $filter('formatTimer')($scope.timer.script[$scope.activeScript].value);

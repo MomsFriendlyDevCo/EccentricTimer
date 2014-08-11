@@ -26,7 +26,7 @@
 <div class="scrollable">
 	<div class="scrollable-content">
 		<div class="list-group">
-			<a ng-repeat="item in timer.script" class="list-group-item" ng-class="item.active && 'active'">
+			<a ng-click="skipTimer($index)" ng-repeat="item in timer.script" class="list-group-item" ng-class="item.active && 'active'">
 				<i ng-show="item.active" class="fa fa-arrow-right"></i>
 				{{item.title}}
 				<span class="badge badge-timer pull-right" ng-class="item.active ? 'badge-warning' : 'badge-default'">{{item.valueFormatted}}</span>
@@ -43,7 +43,7 @@
 		<div class="btn-group justified">
 			<a ng-show="!timerEnabled" ng-click="startTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-play fa-navbar"></i></a>
 			<a ng-show="timerEnabled" ng-click="pauseTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-pause fa-navbar"></i></a>
-			<a ng-show="timerEnabled" ng-click="stopTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-stop fa-navbar"></i></a>
+			<a ng-click="stopTimer()" class="btn btn-navbar btn-icon-only"><i class="fa fa-stop fa-navbar"></i></a>
 		</div>
 	</div>
 	<!-- }}} -->
