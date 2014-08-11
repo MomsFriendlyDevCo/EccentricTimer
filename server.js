@@ -21,7 +21,6 @@ app.set('view engine', 'ejs');
 app.set('layout', 'layouts/main');
 app.enable('view cache');
 app.use(layouts);
-app.use(require('connect-flash')());
 // }}}
 // Controllers {{{
 requireTree('controllers');
