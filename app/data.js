@@ -3,6 +3,7 @@ app.run(function($rootScope) {
 		settings: {
 			tts: {
 				enabled: true,
+				countdown: true,
 				voice: 0
 			}
 		}
@@ -15,7 +16,7 @@ app.run(function($rootScope) {
 			script: [
 				{
 					title: 'Preperation',
-					time: 10 * 1000,
+					time: 5 * 1000,
 				},
 				{
 					title: 'Right arm stress #1',
@@ -24,6 +25,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Right arm stress #2',
@@ -32,6 +34,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Right arm stress #3',
@@ -40,6 +43,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Right arm stress #4',
@@ -48,6 +52,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Switch arms',
 					time: 10 * 1000,
+					say: true
 				},
 				{
 					title: 'Left arm stress #1',
@@ -56,6 +61,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Left arm stress #2',
@@ -64,6 +70,7 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Left arm stress #3',
@@ -72,14 +79,16 @@ app.run(function($rootScope) {
 				{
 					title: 'Rest',
 					time: 60 * 1000,
+					say: true
 				},
 				{
 					title: 'Left arm stress #4',
 					time: 60 * 1000,
 				},
 				{
-					title: 'Finish',
-					time: 10 * 1000,
+					title: 'Finished',
+					time: 3 * 1000,
+					say: true
 				}
 			]
 		}

@@ -37,6 +37,12 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 	};
 	$scope.skipTimer = function(offset) {
 		$scope.activeScript = offset;
+		if ($scope.timer.script[$scope.activeScript].say) { // Say something - true for just repeat title, string otherwise
+			if ($scope.timer.script[$scope.activeScript].say === true) { // Boolean true - repeat title
+				$scope.say($scope.timer.script[$scope.activeScript].title);
+			} else // String - just repeat whatever we're given
+				$scope.say($scope.timer.script[$scope.activeScript].say);
+		}
 	};
 
 	$scope.timerTick = function() {
@@ -48,11 +54,22 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 				$scope.timer.script[$scope.activeScript].value = 0;
 				$scope.timer.script[$scope.activeScript].valueFormatted = $filter('formatTimer')($scope.timer.script[$scope.activeScript].value);
 				$scope.timer.script[$scope.activeScript].active = false;
-				if (++$scope.activeScript < $scope.timer.script.length) { // Still more scripts to go
+				$scope.skipTimer($scope.activeScript + 1);
+				if ($scope.activeScript < $scope.timer.script.length) // Still more scripts to go
 					$scope.timer.script[$scope.activeScript].active = true;
-				}
 			} else {
 				$scope.timer.script[$scope.activeScript].value = newValue;
+				// Handle countdowns (add one second bias for voice) {{{
+				if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 1000) {
+					console.log('Done');
+				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 2000) {
+					$scope.say(1);
+				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 3000) {
+					$scope.say(2);
+				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 4000) {
+					$scope.say(3);
+				}
+				// }}}
 			}
 			$scope.timer.script[$scope.activeScript].valueFormatted = $filter('formatTimer')($scope.timer.script[$scope.activeScript].value);
 			setTimeout($scope.timerTick, 1000);
