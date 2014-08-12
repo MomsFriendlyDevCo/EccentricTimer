@@ -19,23 +19,3 @@ app.run(function($rootScope) {
 		];
 	})
 });
-
-app.config(function($routeProvider, $locationProvider) {
-	$routeProvider.when('/', {
-		templateUrl: "/templates/home.html",
-		animateIn: 'zoomIn'
-	});
-	$routeProvider.when('/timer/:id', {
-		templateUrl: "/templates/timer.html",
-		animateIn: 'fadeInRightBig'
-	});
-	$routeProvider.when('/error', {
-		templateUrl: "/templates/error.html",
-		animateIn: 'fadeInUpBig'
-	});
-	$routeProvider.when('/settings', {
-		templateUrl: "/templates/settings.html",
-		animateIn: 'fadeInUpBig',
-		animateIn: 'fadeOutDownBig'
-	});
-});
