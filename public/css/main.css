@@ -1,12 +1,7 @@
 /* Logos: img.logo {{{ */
 img.logo {
-	max-width: 400px;
+	max-height: 200px;
 	margin-bottom: 20px;
-}
-
-img.logo-md {
-	max-width: 200px;
-	margin-bottom: 10px;
 }
 /* }}} (/
 /* Icons: img.icon {{{ */

@@ -11,7 +11,7 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/error', {
 			templateUrl: "/templates/error.html",
 			animateIn: 'fadeInUpBig'
-		});
+		})
 		.when('/settings', {
 			templateUrl: "/templates/settings.html",
 			animateIn: 'fadeInUpBig',

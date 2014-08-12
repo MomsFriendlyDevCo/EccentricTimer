@@ -19,6 +19,11 @@ a[ng-click] {
 }
 /* }}} */
 /* Mobile-Angular-UI {{{ */
+/* ng-view needs to be height:100% or the child element heights dont get calculated {{{ */
+div[ng-view] {
+	height: 100%;
+}
+/* }}} */
 /* Form padding is a bit extreme {{{ */
 .panel-body {
 	padding: 0;
