@@ -46,5 +46,10 @@ a[ng-click] {
 	margin-bottom: 0;
 }
 /* }}} */
+/* Links in header / footer look weird {{{ */
+.navbar-app, .navbar-app .btn-navbar {
+	color: #505050;
+}
+/* }}} */
 /* }}} */
 
