@@ -3,19 +3,19 @@
 
 	<div class="scrollable">
 		<div class="scrollable-content">
-			<div class="list-group" bubble target="mainSidebar">
+			<div class="list-group" bubble toggle="off" target="mainSidebar">
 				<a class="list-group-item" href="#/">
 					Home
 					<i class="fa fa-chevron-right pull-right"></i>
 				</a>
 			</div>
-			<div class="list-group" bubble target="mainSidebar">
+			<div class="list-group" bubble toggle="off" target="mainSidebar">
 				<a ng-repeat="timer in timers track by timer.id" ng-href="#/timer/{{timer.id}}" class="list-group-item">
 					{{timer.title}}
 					<i class="fa fa-chevron-right pull-right"></i>
 				</a>
 			</div>
-			<div class="list-group" bubble target="mainSidebar">
+			<div class="list-group" bubble toggle="off" target="mainSidebar">
 				<a class="list-group-item" href="#/settings">
 					Settings
 					<i class="fa fa-chevron-right pull-right"></i>
