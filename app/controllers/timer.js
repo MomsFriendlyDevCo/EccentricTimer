@@ -1,4 +1,7 @@
 app.controller('timerController', function($scope, $rootScope, $routeParams, $location, $filter) {
+	$scope.total = null;
+	$scope.totalFormatted = null;
+
 	$scope.refresh = function() {
 		$scope.timerEnabled = false;
 		$scope.timer = _.find($rootScope.timers, {id: $routeParams.id});
@@ -7,6 +10,16 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 			$scope.timer.script[s].value = $scope.timer.script[s].time;
 			$scope.timer.script[s].valueFormatted = $filter('formatTimer')($scope.timer.script[s].value);
 		}
+		$scope.refreshTotal();
+	};
+	$scope.refreshTotal = function() {
+		var sum = 0;
+		for (var s in $scope.timer.script) {
+			if ($scope.timer.script[s].value)
+				sum += $scope.timer.script[s].value;
+		}
+		$scope.total = sum;
+		$scope.totalFormatted = $filter('formatTimer')(sum);
 	};
 	$scope.refresh();
 
@@ -72,6 +85,7 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 				// }}}
 			}
 			$scope.timer.script[$scope.activeScript].valueFormatted = $filter('formatTimer')($scope.timer.script[$scope.activeScript].value);
+			$scope.refreshTotal()
 			setTimeout($scope.timerTick, 1000);
 		});
 	};
