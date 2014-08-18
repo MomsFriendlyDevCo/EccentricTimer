@@ -280,7 +280,7 @@ app.run(function($rootScope) {
 			]
 		},
 		{
-			id: 'tennisElbow2',
+			id: 'tennisElbow2Weights',
 			title: 'Tennis Elbow Session 2 - Weights',
 			description: 'Lifting of a 2kg weight while arm is extended.',
 			routineTime: '10 days',
