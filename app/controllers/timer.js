@@ -72,15 +72,15 @@ app.controller('timerController', function($scope, $rootScope, $routeParams, $lo
 					$scope.timer.script[$scope.activeScript].active = true;
 			} else {
 				$scope.timer.script[$scope.activeScript].value = newValue;
-				// Handle countdowns (add one second bias for voice) {{{
-				if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 1000) {
-					console.log('Done');
-				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 2000) {
-					$scope.say(1);
-				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 3000) {
-					$scope.say(2);
-				} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 4000) {
-					$scope.say(3);
+				// Handle countdowns {{{
+				if (typeof $scope.timer.script[$scope.activeScript].countdown == 'undefined' || $scope.timer.script[$scope.activeScript].countdown == true) {
+					if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 1000) {
+						$scope.say(1);
+					} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 2000) {
+						$scope.say(2);
+					} else if ($scope.user.settings.tts.countdown && $scope.timer.script[$scope.activeScript].value <= 3000) {
+						$scope.say(3);
+					}
 				}
 				// }}}
 			}

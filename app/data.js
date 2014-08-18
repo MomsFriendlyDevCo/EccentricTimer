@@ -21,6 +21,7 @@ app.run(function($rootScope) {
 					title: String // The display title of the item
 					time: Int // Time in seconds to display
 					say: Bool|String // If true the title will be said via TTS, if a string it will be passed to TTS
+					countdown: Bool // (Default: true), use TTS to announce the countdown
 				{
 			]
 		}
@@ -105,7 +106,8 @@ app.run(function($rootScope) {
 				},
 				{
 					title: 'Finished',
-					say: true
+					say: true,
+					countdown: false
 				}
 			]
 		},
@@ -188,7 +190,8 @@ app.run(function($rootScope) {
 				},
 				{
 					title: 'Finished',
-					say: true
+					say: true,
+					countdown: false
 				}
 			]
 		},
@@ -271,7 +274,8 @@ app.run(function($rootScope) {
 				},
 				{
 					title: 'Finished',
-					say: true
+					say: true,
+					countdown: false
 				}
 			]
 		},
@@ -302,7 +306,8 @@ app.run(function($rootScope) {
 				},
 				{
 					title: 'Finished',
-					say: true
+					say: true,
+					countdown: false
 				}
 			]
 		}
