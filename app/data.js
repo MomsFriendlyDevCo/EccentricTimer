@@ -64,7 +64,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to left arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -118,7 +118,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to left arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -127,7 +127,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to right arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -136,7 +136,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to left arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -145,7 +145,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to right arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -154,7 +154,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to left arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -163,7 +163,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to right arm',
 					time: 10 * 1000,
 					say: true
 				},
@@ -172,7 +172,7 @@ app.run(function($rootScope) {
 					time: 60 * 1000,
 				},
 				{
-					title: 'Switch arms',
+					title: 'Switch to left arm',
 					time: 10 * 1000,
 					say: true
 				},
