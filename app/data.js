@@ -14,6 +14,8 @@ app.run(function($rootScope) {
 		{
 			id: String // Unique ID of this timer (used for URL slug)
 			title: String // Human friendly name of the timer profile
+			description: String // UNSUPPORTED Description of the routine
+			routineTime: String // UNSUPPORTED Time the routine should be run for (e.g. '1 week')
 			script: [ // Array of script items
 				{
 					title: String // The display title of the item
@@ -26,7 +28,9 @@ app.run(function($rootScope) {
 
 		{
 			id: 'tennisElbow',
-			title: 'Tennis Elbow',
+			title: 'Tennis Elbow Session 1',
+			description: 'Simple Tennis Elbow stretches with the aid of a rubber band. Designed to work with a arm at 90 degrees bend.',
+			routineTime: '1 week',
 			script: [
 				{
 					title: 'Preperation',
@@ -106,8 +110,10 @@ app.run(function($rootScope) {
 			]
 		},
 		{
-			id: 'tennisElbowCompressed',
-			title: 'Tennis Elbow (Alternating)',
+			id: 'tennisElbow1Compressed',
+			title: 'Tennis Elbow Session 1 (Alternating)',
+			description: 'Alternating Tennis Elbow stretches desgigned to reduce the time of the routine. Designed to work with a arm at 90 degrees bend.',
+			routineTime: '1 week',
 			script: [
 				{
 					title: 'Preperation',
@@ -179,6 +185,120 @@ app.run(function($rootScope) {
 				{
 					title: 'Left arm stress #4',
 					time: 60 * 1000,
+				},
+				{
+					title: 'Finished',
+					say: true
+				}
+			]
+		},
+		{
+			id: 'tennisElbow2',
+			title: 'Tennis Elbow Session 2',
+			description: 'Straight arm based Tennis Elbow exsorsizes. Stretch arm in \'stopping motion\'.',
+			routineTime: '10 days',
+			script: [
+				{
+					title: 'Preperation',
+					time: 5 * 1000,
+				},
+				{
+					title: 'Right arm stress #1',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm stress #1',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm stress #2',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm stress #2',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm stress #3',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm stress #3',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm stress #4',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 10 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm stress #4',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Finished',
+					say: true
+				}
+			]
+		},
+		{
+			id: 'tennisElbow2',
+			title: 'Tennis Elbow Session 2 - Weights',
+			description: 'Lifting of a 2kg weight while arm is extended.',
+			routineTime: '10 days',
+			script: [
+				{
+					title: 'Preperation',
+					time: 5 * 1000,
+				},
+				{
+					title: 'Lift 1',
+					say: true,
+					time: 3 * 1000,
+				},
+				{
+					title: 'Lift 2',
+					say: true,
+					time: 3 * 1000,
+				},
+				{
+					title: 'Lift 3',
+					say: true,
+					time: 3 * 1000,
 				},
 				{
 					title: 'Finished',
