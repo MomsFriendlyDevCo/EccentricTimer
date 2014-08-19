@@ -6,6 +6,7 @@ var gutil = require('gulp-util');
 var colors = require('colors');
 var plugins = require('gulp-load-plugins')();
 var mkdirp = require('mkdirp');
+var rimraf = require('rimraf');
 
 var paths = {
 	scripts: [
@@ -17,6 +18,26 @@ var paths = {
 	],
 	build: 'build'
 };
+
+// Useful functions {{{
+/**
+* Wrapper function to quickly include an external run inside Gulp
+* Can include options.ignoreFail which always triggers a success event on finish
+* @param string command The command to run
+* @param object options Options object
+* @param function next Callback(err) to call on finish
+*/
+function run(command, options, next) {
+	var exec = require('child_process').exec;
+	exec(command, options, function(err, stdout, stderr) {
+		if (stdout)
+			gutil.log('Child process responded:', stdout);
+		if (stderr)
+			gutil.log('Child process err:', stderr);
+		return next(options.ignoreFail ? null : err);
+	});
+}
+// }}}
 
 /**
 * Generic build-all script
@@ -253,41 +274,19 @@ gulp.task('pgbuild', ['scripts'], function() {
 		function(next) {
 			gutil.log('Downloading main site page...');
 
-			var wget = spawn('wget', ['-q', '-r', '--no-host-directories', config.url], {cwd: 'build/phonegap'});
-			wget.stdout.setEncoding('utf8');
-			wget.stdout.on('data', function(data) {
-				gutil.log(data);
-			});
-			wget.stderr.setEncoding('utf8');
-			wget.stderr.on('data', function(data) {
-				gutil.log(data.red);
-			});
-			wget.on('close', function(code) {
-				next(code == 0 || code == 8 ? null : 'WGet exited with the none-zero error code: ' + code);
-			});
+			run('wget -q -r --no-host-directories "' + config.url + '"', {cwd: 'build/phonegap', ignoreFail: true}, next);
 		},
 		function(next) {
 			gutil.log('Rewriting all links in HTML files...');
-			exec("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: 'build/phonegap'}, function(err, stdout, stderr) {
-				if (stdout)
-					gutil.log('Child process responded:', stdout);
-				if (stderr)
-					gutil.log('Child process err:', stderr);
-				return next(err);
-			});
+			run("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: 'build/phonegap'}, next);
 		},
 		function(next) {
 			gutil.log('Compressing into ZIP...');
-			exec("zip -qr ../phonegap.zip *", {cwd: 'build/phonegap'}, function(err, stdout, stderr) {
-				if (stdout)
-					gutil.log('Child process responded:', stdout);
-				if (stderr)
-					gutil.log('Child process err:', stderr);
-				return next(err);
-			});
+			run("zip -qr ../phonegap.zip *", {cwd: 'build/phonegap'}, next);
 		},
 		function(next) {
 			gutil.log('Cleaning up...');
+			rimraf('build/phonegap', next);
 		}
 	]);
 });
