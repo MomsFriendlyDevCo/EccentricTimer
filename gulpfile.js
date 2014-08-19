@@ -223,6 +223,7 @@ gulp.task('pgbuild', ['scripts'], function() {
 	// Apply s/href="\//href=\"/g on build/phonegap/index.html (make all links relative)
 
 	var exec = require('child_process').exec;
+	var spawn = require('child_process').spawn;
 
 	async.series([
 		function(next) {
@@ -251,6 +252,42 @@ gulp.task('pgbuild', ['scripts'], function() {
 		},
 		function(next) {
 			gutil.log('Downloading main site page...');
+
+			var wget = spawn('wget', ['-q', '-r', '--no-host-directories', config.url], {cwd: 'build/phonegap'});
+			wget.stdout.setEncoding('utf8');
+			wget.stdout.on('data', function(data) {
+				gutil.log(data);
+			});
+			wget.stderr.setEncoding('utf8');
+			wget.stderr.on('data', function(data) {
+				gutil.log(data.red);
+			});
+			wget.on('close', function(code) {
+				next(code == 0 || code == 8 ? null : 'WGet exited with the none-zero error code: ' + code);
+			});
+		},
+		function(next) {
+			gutil.log('Rewriting all links in HTML files...');
+			exec("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: 'build/phonegap'}, function(err, stdout, stderr) {
+				if (stdout)
+					gutil.log('Child process responded:', stdout);
+				if (stderr)
+					gutil.log('Child process err:', stderr);
+				return next(err);
+			});
+		},
+		function(next) {
+			gutil.log('Compressing into ZIP...');
+			exec("zip -qr ../phonegap.zip *", {cwd: 'build/phonegap'}, function(err, stdout, stderr) {
+				if (stdout)
+					gutil.log('Child process responded:', stdout);
+				if (stderr)
+					gutil.log('Child process err:', stderr);
+				return next(err);
+			});
+		},
+		function(next) {
+			gutil.log('Cleaning up...');
 		}
 	]);
 });
