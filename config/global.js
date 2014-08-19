@@ -16,7 +16,8 @@ var defaults = {
 	root: path.normalize(__dirname + '/..'),
 	host: '127.0.0.1',
 	port: process.env.PORT || 9000,
-	url: 'http://localhost'
+	url: 'http://localhost',
+	package: require('../package.json'),
 };
 
 module.exports = _.merge(

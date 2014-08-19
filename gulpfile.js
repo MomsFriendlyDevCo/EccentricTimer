@@ -1,8 +1,11 @@
+var _ = require('lodash');
+var fs = require('fs');
 var async = require('async');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var colors = require('colors');
 var plugins = require('gulp-load-plugins')();
+var mkdirp = require('mkdirp');
 
 var paths = {
 	scripts: [
@@ -71,6 +74,13 @@ gulp.task('default', ['scripts'], function () {
 		.on('restart', function () {
 			gutil.log('Restarted!'.red)
 		});
+});
+
+
+gulp.task('bump', function(){
+	gulp.src('./package.json')
+		.pipe(plugins.bump({type: 'patch'})) // Types: major|minor|patch|prerelease
+		.pipe(gulp.dest('./'));
 });
 
 // Debug kit {{{
@@ -203,5 +213,45 @@ gulp.task('osrestart', function() {
 	tailer.stderr.on('data', function(data) {
 		gutil.log(data.red);
 	});
+});
+// }}}
+
+// Phonegap Functionality {{{
+gulp.task('pgbuild', ['scripts'], function() {
+	var config = require('./config/global');
+	// Download localhost -> build/phonegap/index.html
+	// Apply s/href="\//href=\"/g on build/phonegap/index.html (make all links relative)
+
+	var exec = require('child_process').exec;
+
+	async.series([
+		function(next) {
+			gutil.log('Making directory structure for PhoneGap...');
+			mkdirp('build/phonegap/build', next);
+		},
+		function(next) {
+			gutil.log('Copying Angular files...');
+			gulp.src(['app/**/'])
+				.pipe(gulp.dest('build/phonegap/app'));
+			next();
+		},
+		function(next) {
+			gutil.log('Copying view files...');
+			gulp.src(['views/templates/**/'])
+				.pipe(gulp.dest('build/phonegap/templates'));
+			next();
+		},
+		function(next) {
+			// Bulid + template the config.xml file from the projects config
+			gutil.log('Building PhoneGap config.xml file...');
+			fs.readFile('config.xml', function(err, data) {
+				var outConfigXML = _.template(data, config);
+				fs.writeFile('build/phonegap/build/config.xml', outConfigXML, next);
+			});
+		},
+		function(next) {
+			gutil.log('Downloading main site page...');
+		}
+	]);
 });
 // }}}
