@@ -83,9 +83,13 @@ gulp.task('config', function() {
 * Launch a server and watch the local file system for changes (restarting the server if any are detected)
 */
 gulp.task('default', ['scripts'], function () {
-	plugins.nodemon({script: 'server.js', ext: 'html js ejs'})
+	plugins.nodemon({
+		script: 'server.js',
+		ext: 'html js ejs',
+		ignore: ['build/*'],
+	})
 		.on('change', ['scripts'])
-		.on('restart', function () {
+		.on('restart', function (a,b,c) {
 			gutil.log('Restarted!'.red)
 		});
 });
