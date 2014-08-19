@@ -29,6 +29,7 @@ var paths = {
 */
 function run(command, options, next) {
 	var exec = require('child_process').exec;
+	gutil.log('Run: ' + command);
 	exec(command, options, function(err, stdout, stderr) {
 		if (stdout)
 			gutil.log('Child process responded:', stdout);
@@ -47,21 +48,11 @@ gulp.task('build', ['scripts']);
 /**
 * Compile all JS files into the build directory
 */
-gulp.task('scripts', ['clean'], function() {
+gulp.task('scripts', [], function() {
 	return gulp.src(paths.scripts)
 		// .pipe(plugins.uglify())
 		.pipe(plugins.concatSourcemap('all.min.js'))
 		.pipe(gulp.dest(paths.build));
-});
-
-/**
-* Clean the build directory
-*/
-gulp.task('clean', function(cb) {
-	// Dummy function - we dont want to keep deleting the build dir each time for no real reason
-	// Uncomment the below if you do
-	/* return gulp.src(paths.build)
-		.pipe(plugins.rimraf()); */
 });
 
 /**
