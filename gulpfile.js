@@ -58,8 +58,10 @@ gulp.task('scripts', ['clean'], function() {
 * Clean the build directory
 */
 gulp.task('clean', function(cb) {
-	return gulp.src(paths.build)
-		.pipe(plugins.rimraf());
+	// Dummy function - we dont want to keep deleting the build dir each time for no real reason
+	// Uncomment the below if you do
+	/* return gulp.src(paths.build)
+		.pipe(plugins.rimraf()); */
 });
 
 /**
@@ -268,7 +270,7 @@ gulp.task('pgbuild', ['scripts'], function() {
 			gutil.log('Building PhoneGap config.xml file...');
 			fs.readFile('config.xml', function(err, data) {
 				var outConfigXML = _.template(data, config);
-				fs.writeFile('build/phonegap/build/config.xml', outConfigXML, next);
+				fs.writeFile('build/phonegap/config.xml', outConfigXML, next);
 			});
 		},
 		function(next) {
