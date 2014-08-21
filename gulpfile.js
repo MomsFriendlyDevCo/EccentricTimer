@@ -106,13 +106,15 @@ gulp.task('scripts', [], function() {
 
 /**
 * Spew a template file into the main JS file
+* This is only really needed on mobile devices to speed up the template load time
+* Its needed for PhoneGap which for some reason can't load external files for use in an ngView
 */
 gulp.task('scripts:templateCache', ['scripts'], function(next) {
 	var mainBuild = gulp.src('build/all.min.js');
 
 	var templateCache = gulp.src('views/templates/**/*.html')
 		.pipe(plugins.angularTemplatecache('templateCache.js', {
-			base: 'templates',
+			root: '/templates',
 			module: 'app'
 		}));
 
@@ -308,19 +310,27 @@ gulp.task('osrestart', function() {
 */
 gulp.task('pg', [], function(next) {
 	runSequence(
+		'bump',
 		'pgpush',
+		'pgclean',
 		'pgwait',
 		next
 	);
 });
 
 /**
+* Cleans the PhoneGap build
+*/
+gulp.task('pgclean', [], function(next) {
+	gutil.log('Cleaning PhoneGap build...');
+	rimraf(paths.phoneGap.buildDir, next);
+});
+
+/**
 * Compiles the PhoneGap ZIP object to be uploaded
 */
-gulp.task('pgbuild', ['scripts'], function(mainNext) {
+gulp.task('pgbuild', ['scripts:templateCache', 'pgclean'], function(mainNext) {
 	var config = require('./config/global');
-	// Download localhost -> build/phonegap/index.html
-	// Apply s/href="\//href=\"/g on build/phonegap/index.html (make all links relative)
 
 	var exec = require('child_process').exec;
 	var spawn = require('child_process').spawn;
@@ -331,21 +341,8 @@ gulp.task('pgbuild', ['scripts'], function(mainNext) {
 			mkdirp(paths.phoneGap.buildDir + '/build', next);
 		},
 		function(next) {
-			gutil.log('Copying Angular files...');
-			gulp.src(['app/**/'])
-				.pipe(gulp.dest(paths.phoneGap.buildDir + '/app'));
-			next();
-		},
-		function(next) {
-			gutil.log('Copying view files...');
-			gulp.src(['views/templates/**/'])
-				.pipe(gulp.dest(paths.phoneGap.buildDir + '/templates'));
-			next();
-		},
-		function(next) {
 			// Bulid + template the config.xml file from the projects config
-			console.log('CONFIG', config);
-			gutil.log('Building PhoneGap config.xml file...');
+			gutil.log('Building config.xml v', config.package.version.cyan, '...');
 			fs.readFile('config.xml', function(err, data) {
 				var outConfigXML = _.template(data, config);
 				fs.writeFile(paths.phoneGap.buildDir + '/config.xml', outConfigXML, next);
@@ -361,6 +358,11 @@ gulp.task('pgbuild', ['scripts'], function(mainNext) {
 			run("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: paths.phoneGap.buildDir}, next);
 		},
 		function(next) {
+			gutil.log('Copying image assets...');
+			gulp.src('public/img/**')
+				.pipe(gulp.dest('build/phonegap/img'));
+		},
+		function(next) {
 			fs.exists(paths.phoneGap.zip, function(exists) {
 				if (exists) {
 					gutil.log('Deleting existing ZIP...');
@@ -371,7 +373,7 @@ gulp.task('pgbuild', ['scripts'], function(mainNext) {
 		},
 		function(next) {
 			gutil.log('Compressing into ZIP...');
-			run("zip -qr '" + paths.phoneGap.zipRelative + "' *", {cwd: phoneGapBuild}, next);
+			run("zip -qr '" + paths.phoneGap.zipRelative + "' *", {cwd: paths.phoneGap.buildDir}, next);
 		},
 		function(next) {
 			fs.stat(paths.phoneGap.zip, function(err, stat) {
@@ -385,7 +387,7 @@ gulp.task('pgbuild', ['scripts'], function(mainNext) {
 /**
 * Compiles + uploads the latest ZIP image to the PhoneGap Build service
 */
-gulp.task('pgpush', ['bump', 'pgbuild'], function(next) {
+gulp.task('pgpush', ['pgbuild'], function(next) {
 	var config = require('./config/global');
 	gutil.log('Uploading ZIP image...');
 
