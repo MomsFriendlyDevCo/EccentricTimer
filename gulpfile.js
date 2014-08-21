@@ -18,7 +18,12 @@ var paths = {
 	data: [
 		'models/data/**/*.js'
 	],
-	build: 'build'
+	build: 'build',
+	phoneGap: {
+		buildDir: 'build/phonegap',
+		zip: 'build/phonegap.zip',
+		zipRelative: '../phonegap.zip', // Relative path of the zip from buildDir
+	}
 };
 
 // Useful functions {{{
@@ -304,47 +309,53 @@ gulp.task('pgbuild', ['scripts'], function(mainNext) {
 	async.series([
 		function(next) {
 			gutil.log('Making directory structure for PhoneGap...');
-			mkdirp('build/phonegap/build', next);
+			mkdirp(paths.phoneGap.buildDir + '/build', next);
 		},
 		function(next) {
 			gutil.log('Copying Angular files...');
 			gulp.src(['app/**/'])
-				.pipe(gulp.dest('build/phonegap/app'));
+				.pipe(gulp.dest(paths.phoneGap.buildDir + '/app'));
 			next();
 		},
 		function(next) {
 			gutil.log('Copying view files...');
 			gulp.src(['views/templates/**/'])
-				.pipe(gulp.dest('build/phonegap/templates'));
+				.pipe(gulp.dest(paths.phoneGap.buildDir + '/templates'));
 			next();
 		},
 		function(next) {
 			// Bulid + template the config.xml file from the projects config
+			console.log('CONFIG', config);
 			gutil.log('Building PhoneGap config.xml file...');
 			fs.readFile('config.xml', function(err, data) {
 				var outConfigXML = _.template(data, config);
-				fs.writeFile('build/phonegap/config.xml', outConfigXML, next);
+				fs.writeFile(paths.phoneGap.buildDir + '/config.xml', outConfigXML, next);
 			});
 		},
 		function(next) {
 			gutil.log('Downloading main site page...');
 
-			run('wget -q -r --no-host-directories "' + config.url + '"', {cwd: 'build/phonegap', ignoreFail: true}, next);
+			run('wget -q -r --no-host-directories "' + config.url + '"', {cwd: paths.phoneGap.buildDir, ignoreFail: true}, next);
 		},
 		function(next) {
 			gutil.log('Rewriting all links in HTML files...');
-			run("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: 'build/phonegap'}, next);
+			run("find -iname '*.html' -print0 | xargs -0 perl -pi -e 's!(href|src)=\"\/!\\1=\"!g'", {cwd: paths.phoneGap.buildDir}, next);
+		},
+		function(next) {
+			fs.exists(paths.phoneGap.zip, function(exists) {
+				if (exists) {
+					gutil.log('Deleting existing ZIP...');
+					fs.unlink(paths.phoneGap.zip, next);
+				} else
+					next();
+			});
 		},
 		function(next) {
 			gutil.log('Compressing into ZIP...');
-			run("zip -qr ../phonegap.zip *", {cwd: 'build/phonegap'}, next);
+			run("zip -qr '" + paths.phoneGap.zipRelative + "' *", {cwd: phoneGapBuild}, next);
 		},
 		function(next) {
-			gutil.log('Cleaning up...');
-			rimraf('build/phonegap', next);
-		},
-		function(next) {
-			fs.stat('build/phonegap.zip', function(err, stat) {
+			fs.stat(paths.phoneGap.zip, function(err, stat) {
 				gutil.log('Done, ZIP size:', stat.size.toString().cyan, 'bytes');
 				mainNext();
 			});
@@ -362,7 +373,7 @@ gulp.task('pgpush', ['bump', 'pgbuild'], function(next) {
 	superagent
 		.put('https://build.phonegap.com/api/v1/apps/' + config.phonegap.appId)
 		.auth(config.phonegap.username, config.phonegap.password)
-		.attach('file', 'build/phonegap.zip')
+		.attach('file', paths.phoneGap.zip)
 		.end(function(err, res) {
 			if (res.status == '200') {
 				gutil.log('Zip image uploaded');
