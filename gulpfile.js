@@ -5,6 +5,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var colors = require('colors');
 var plugins = require('gulp-load-plugins')();
+var mergeStream = require('merge-stream');
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
 var runSequence = require('run-sequence');
@@ -101,6 +102,24 @@ gulp.task('scripts', [], function() {
 		// .pipe(plugins.uglify())
 		.pipe(plugins.concatSourcemap('all.min.js'))
 		.pipe(gulp.dest(paths.build));
+});
+
+/**
+* Spew a template file into the main JS file
+*/
+gulp.task('scripts:templateCache', ['scripts'], function(next) {
+	var mainBuild = gulp.src('build/all.min.js');
+
+	var templateCache = gulp.src('views/templates/**/*.html')
+		.pipe(plugins.angularTemplatecache('templateCache.js', {
+			base: 'templates',
+			module: 'app'
+		}));
+
+	var merged = mergeStream(mainBuild, templateCache)
+		.pipe(plugins.concat('all.min.js'))
+		.pipe(gulp.dest('build'));
+	return merged;
 });
 
 /**
