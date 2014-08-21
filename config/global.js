@@ -18,6 +18,11 @@ var defaults = {
 	port: process.env.PORT || 9000,
 	url: 'http://localhost',
 	package: require('../package.json'),
+	phonegap: { // Store all this in private.js
+		appId: '12345',
+		username: 'nononono',
+		password: 'nononono',
+	}
 };
 
 module.exports = _.merge(

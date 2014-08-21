@@ -7,6 +7,8 @@ var colors = require('colors');
 var plugins = require('gulp-load-plugins')();
 var mkdirp = require('mkdirp');
 var rimraf = require('rimraf');
+var runSequence = require('run-sequence');
+var superagent = require('superagent');
 
 var paths = {
 	scripts: [
@@ -22,21 +24,62 @@ var paths = {
 // Useful functions {{{
 /**
 * Wrapper function to quickly include an external run inside Gulp
-* Can include options.ignoreFail which always triggers a success event on finish
+*
 * @param string command The command to run
 * @param object options Options object
-* @param function next Callback(err) to call on finish
+* @param function next Callback(code) to call on finish
+*
+* @param string options.cwd Set the working directory of the sub-process
+* @param object options.env Environment key pairs
+* @param string options.encoding Default encoding for streams (default: 'utf8')
+* @param int options.timeout (default: 0)
+* @param int options.maxBuffer (default: 200*1024)
+* @param string options.killSignal (Default: 'SIGTERM')
+* @param bool options.ignoreFail (custom functionality) Ignore fail codes and always treat the sub-process as executing correctly
+* @param string options.method (custom functionality, default: 'exec') Which execution method to follow (some of the above settings can force this)
+* @param null|function(data) options.stdout (custom functionality, default: null) Call this function on each stdout data burst
+* @param null|function(data) options.stderr (custom functionality, default: null) Call this function on each stderr data burst
+* @param bool options.passthru (custom functionality, default: false) Send all output from this command to the console as if it were run stand-alone - this really is just a macro for turning on certain flags
 */
 function run(command, options, next) {
-	var exec = require('child_process').exec;
+	var child_process = require('child_process');
 	gutil.log('Run: ' + command);
-	exec(command, options, function(err, stdout, stderr) {
-		if (stdout)
-			gutil.log('Child process responded:', stdout);
-		if (stderr)
-			gutil.log('Child process err:', stderr);
-		return next(options.ignoreFail ? null : err);
-	});
+	if (!options.encoding)
+		options.encoding = 'utf8';
+	if (options.passthru) {
+		options.method = 'spawn';
+		options.stdio = 'inherit';
+	}
+
+	if (!options.method || options.method == 'exec') {
+		child_process.exec(command, options, function(err, stdout, stderr) {
+			if (stdout)
+				gutil.log('Child process responded:', stdout);
+			if (stderr)
+				gutil.log('Child process err:', stderr);
+			if (options.ignoreFail)
+				return next();
+			if (err && err.code)
+				return next(err.code);
+			return next();
+		});
+	} else if (options.method == 'spawn') {
+		if (typeof command != 'array')
+			command = command.split(' ');
+
+		var process = child_process.spawn(command[0], command.slice(1), options);
+		process.on('close', function(code) {
+			next(code);
+		});
+		if (options.stdout) {
+			process.stdout.setEncoding(options.encoding);
+			process.stdout.on('data', options.stdout);
+		}
+		if (options.stderr) {
+			process.stderr.setEncoding(options.encoding);
+			process.stderr.on('data', options.stderr);
+		}
+	}
 }
 // }}}
 
@@ -95,10 +138,11 @@ gulp.task('default', ['scripts'], function () {
 });
 
 
-gulp.task('bump', function(){
-	gulp.src('./package.json')
+gulp.task('bump', function() {
+	var stream = gulp.src('./package.json')
 		.pipe(plugins.bump({type: 'patch'})) // Types: major|minor|patch|prerelease
 		.pipe(gulp.dest('./'));
+	return stream;
 });
 
 // Debug kit {{{
@@ -235,7 +279,21 @@ gulp.task('osrestart', function() {
 // }}}
 
 // Phonegap Functionality {{{
-gulp.task('pgbuild', ['scripts'], function() {
+/**
+* User friendly function to compile + upload + wait for finish of a PhoneGap application
+*/
+gulp.task('pg', [], function(next) {
+	runSequence(
+		'pgpush',
+		'pgwait',
+		next
+	);
+});
+
+/**
+* Compiles the PhoneGap ZIP object to be uploaded
+*/
+gulp.task('pgbuild', ['scripts'], function(mainNext) {
 	var config = require('./config/global');
 	// Download localhost -> build/phonegap/index.html
 	// Apply s/href="\//href=\"/g on build/phonegap/index.html (make all links relative)
@@ -284,7 +342,74 @@ gulp.task('pgbuild', ['scripts'], function() {
 		function(next) {
 			gutil.log('Cleaning up...');
 			rimraf('build/phonegap', next);
+		},
+		function(next) {
+			fs.stat('build/phonegap.zip', function(err, stat) {
+				gutil.log('Done, ZIP size:', stat.size.toString().cyan, 'bytes');
+				mainNext();
+			});
 		}
 	]);
+});
+
+/**
+* Compiles + uploads the latest ZIP image to the PhoneGap Build service
+*/
+gulp.task('pgpush', ['bump', 'pgbuild'], function(next) {
+	var config = require('./config/global');
+	gutil.log('Uploading ZIP image...');
+
+	superagent
+		.put('https://build.phonegap.com/api/v1/apps/' + config.phonegap.appId)
+		.auth(config.phonegap.username, config.phonegap.password)
+		.attach('file', 'build/phonegap.zip')
+		.end(function(err, res) {
+			if (res.status == '200') {
+				gutil.log('Zip image uploaded');
+				next();
+			} else {
+				gutil.log('Problem uploading ZIP image');
+				next(err);
+			}
+		});
+});
+
+/**
+* Retrieves the current PhoneGap Build status object from the server
+*/
+gulp.task('pgstatus', [], function(next) {
+	var config = require('./config/global');
+	var util = require('util');
+	superagent
+		.get('https://build.phonegap.com/api/v1/apps/' + config.phonegap.appId)
+		.auth(config.phonegap.username, config.phonegap.password)
+		.end(function(err, res) {
+			gutil.log(util.inspect(res.body, {depth: 3}));
+			next(err);
+		});
+});
+
+/**
+* Similar to `pgstatus` this task obtains the current status object and keeps checking until the android app status is compiled
+*/
+gulp.task('pgwait', [], function(next) {
+	var config = require('./config/global');
+	var util = require('util');
+
+	var scan = function() {
+		superagent
+			.get('https://build.phonegap.com/api/v1/apps/' + config.phonegap.appId)
+			.auth(config.phonegap.username, config.phonegap.password)
+			.end(function(err, res) {
+				if (res.body.status.android == 'complete') {
+					gutil.log('Android app', res.body.version.cyan, 'compile complete');
+					next();
+				} else {
+					gutil.log('Android app', res.body.version.cyan, 'compiling...');
+					setTimeout(scan, 2000);
+				}
+			});
+	};
+	scan();
 });
 // }}}
