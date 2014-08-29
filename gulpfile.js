@@ -116,7 +116,8 @@ gulp.task('scripts:templateCache', ['scripts'], function(next) {
 		.pipe(plugins.angularTemplatecache('templateCache.js', {
 			root: '/templates',
 			module: 'app'
-		}));
+		}))
+		.pipe(plugins.replace(/(href|src)=(\\["'])\//g, '$1=$2')); // Rewrite all literal paths to relative ones
 
 	var merged = mergeStream(mainBuild, templateCache)
 		.pipe(plugins.concat('all.min.js'))
@@ -378,10 +379,10 @@ gulp.task('pgbuild', ['scripts:templateCache', 'pgclean'], function(mainNext) {
 		function(next) {
 			fs.stat(paths.phoneGap.zip, function(err, stat) {
 				gutil.log('Done, ZIP size:', stat.size.toString().cyan, 'bytes');
-				mainNext();
+				next();
 			});
 		}
-	]);
+	], mainNext);
 });
 
 /**
@@ -427,6 +428,7 @@ gulp.task('pgstatus', [], function(next) {
 gulp.task('pgwait', [], function(next) {
 	var config = require('./config/global');
 	var util = require('util');
+	var tryCount = 1;
 
 	var scan = function() {
 		superagent
@@ -434,10 +436,14 @@ gulp.task('pgwait', [], function(next) {
 			.auth(config.phonegap.username, config.phonegap.password)
 			.end(function(err, res) {
 				if (res.body.status.android == 'complete') {
-					gutil.log('Android app', res.body.version.cyan, 'compile complete');
+					gutil.log('Android app', res.body.version.cyan, 'compiled!'.green);
 					next();
 				} else {
-					gutil.log('Android app', res.body.version.cyan, 'compiling...');
+					if (tryCount++ == 1) {
+						gutil.log('Android app', res.body.version.cyan, 'compiling...');
+					} else {
+						gutil.log(' * Refresh #' + tryCount.toString().cyan + '. Still compiling...');
+					}
 					setTimeout(scan, 2000);
 				}
 			});
