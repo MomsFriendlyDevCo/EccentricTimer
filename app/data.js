@@ -281,7 +281,7 @@ app.run(function($rootScope) {
 		},
 		{
 			id: 'tennisElbow3',
-			title: 'Tennis Elbow Session 3',
+			title: 'Tennis Elbow Session 3 (60s)',
 			description: '5kg Weight holding exorcizes, twice a day',
 			routineTime: '14 days',
 			script: [
@@ -355,6 +355,90 @@ app.run(function($rootScope) {
 				{
 					title: 'Left arm weights #4',
 					time: 60 * 1000,
+				},
+				{
+					title: 'Finished',
+					say: true,
+					countdown: false
+				}
+			]
+		},
+		{
+			id: 'tennisElbow3-45s',
+			title: 'Tennis Elbow Session 3 (45s)',
+			description: '5kg Weight holding exorcizes, twice a day with lighter 45 second intervals',
+			routineTime: '14 days',
+			script: [
+				{
+					title: 'Preperation',
+					time: 5 * 1000,
+				},
+				{
+					title: 'Right arm weights #1',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm weights #1',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm weights #2',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm weights #2',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm weights #3',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm weights #3',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to right arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Right arm weights #4',
+					time: 45 * 1000,
+				},
+				{
+					title: 'Switch to left arm',
+					time: 5 * 1000,
+					say: true
+				},
+				{
+					title: 'Left arm weights #4',
+					time: 45 * 1000,
 				},
 				{
 					title: 'Finished',

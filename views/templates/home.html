@@ -14,18 +14,23 @@
 <!-- Body -->
 <div class="app-body"><div class="app-content">
 
-<div class="row pad-top-xl">
-	<div class="text-center">
-		<img class="logo" src="/img/logo.png"/>
-	</div>
-</div>
+<div class="scrollable">
+	<div class="scrollable-content">
 
-<div class="row pad-bottom-xs" ng-repeat="timer in timers track by timer.id">
-	<a ng-href="#/timer/{{timer.id}}" class="btn btn-lg btn-success col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4">
-		<div icon="{{item.icon}}"></div>
-		{{timer.title}}
-		<i class="fa fa-chevron-right pull-right"></i>
-	</a>
+		<div class="row pad-top-xl">
+			<div class="text-center">
+				<img class="logo" src="/img/logo.png"/>
+			</div>
+		</div>
+
+		<div class="row pad-bottom-xs" ng-repeat="timer in timers track by timer.id">
+			<a ng-href="#/timer/{{timer.id}}" class="btn btn-lg btn-success col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4">
+				<div icon="{{item.icon}}"></div>
+				{{timer.title}}
+				<i class="fa fa-chevron-right pull-right"></i>
+			</a>
+		</div>
+	</div>
 </div>
 
 </div></div>
