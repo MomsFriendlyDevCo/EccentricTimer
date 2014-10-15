@@ -57,4 +57,9 @@ div[ng-view] {
 }
 /* }}} */
 /* }}} */
-
+/* Front page buttons {{{ */
+.btn-group-lg > .btn, .btn-lg {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* }}} */
