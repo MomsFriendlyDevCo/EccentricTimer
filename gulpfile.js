@@ -1,12 +1,15 @@
 var _ = require('lodash');
+var axios = require('axios');
 var fs = require('fs');
 var async = require('async');
+var ghPages = require('gulp-gh-pages');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var colors = require('colors');
 var plugins = require('gulp-load-plugins')();
 var mergeStream = require('merge-stream');
 var mkdirp = require('mkdirp');
+var rename = require('gulp-rename');
 var rimraf = require('rimraf');
 var runSequence = require('run-sequence');
 var superagent = require('superagent');
@@ -449,5 +452,48 @@ gulp.task('pgwait', [], function(next) {
 			});
 	};
 	scan();
+});
+// }}}
+
+// GitHub pages {{{
+gulp.task('gh-pages:build-standalone', ['build', 'scripts:templateCache'], ()=> {
+	axios.defaults.baseURL = 'http://localhost:9000';
+	var outPath = `${__dirname}/build/standalone`;
+
+	return Promise.resolve()
+		.then(()=> mkdirp(outPath))
+		.then(()=> Promise.all([
+			axios.get('/').then(res => fs.promises.writeFile(`${outPath}/index.html`, res.data.replace(/(href|src)="\//g, '$1="'))),
+		]))
+});
+
+gulp.task('gh-pages', ['build', 'gh-pages:build-standalone'], function() {
+	rimraf.sync('./gh-pages');
+
+	return gulp.src([
+		'./LICENSE',
+		'./public/_config.yml',
+		'./build/**/*',
+		'./bower_components/**/*',
+		'./views/**/*',
+		'./pages/frontpage',
+		'./public/**/*',
+	], {base: __dirname})
+		.pipe(rename(function(path) {
+			if (path.dirname == 'build/standalone') {
+				path.dirname = '.';
+			} else if (path.dirname == 'public') {
+				path.dirname = '';
+			} else if (path.dirname == 'public/css') {
+				path.dirname = 'css';
+			} else if (path.dirname == 'public/img') {
+				path.dirname = 'img';
+			}
+			return path;
+		}))
+		.pipe(ghPages({
+			cacheDir: 'gh-pages',
+			push: true, // Change to false for dryrun (files dumped to cacheDir)
+		}));
 });
 // }}}

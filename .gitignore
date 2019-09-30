@@ -1,3 +1,5 @@
+app/phonegap.js
 config/private.js
 node_modules/
+gh-pages/
 build/
