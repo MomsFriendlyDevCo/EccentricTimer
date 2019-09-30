@@ -1,8 +1,0 @@
-#!/bin/bash
-if [ -z "$OPENSHIFT_REPO_DIR" ]; then
-	echo "OpenShift Repo dir is not set - refusing to build"
-	exit
-else
-	cd "$OPENSHIFT_REPO_DIR"
-	gulp build
-fi
